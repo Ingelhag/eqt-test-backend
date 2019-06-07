@@ -1,15 +1,13 @@
-if (process.env.LOGLEVEL === undefined) {
-  process.env.LOGLEVEL = "info";
-}
 console.log(`🔵  Launching application with: 
-    - NODE_ENV: "${process.env.NODE_ENV}"
-    - LOGLEVEL: "${process.env.LOGLEVEL}"`);
+    - NODE_ENV: "${process.env.NODE_ENV}"`);
 
 console.log("🔵  Initiating Typescript...");
+
 require("ts-node").register({
-  fast: process.env.NODE_ENV === "production",
+  fast: false,
   project: "./tsconfig.json",
-  typeCheck: process.env.NODE_ENV !== "production"
+  typeCheck: true
 });
+
 console.log("  ✅  Typescript initiated");
 require("./src/server");
