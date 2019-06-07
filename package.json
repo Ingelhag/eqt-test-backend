@@ -1,0 +1,26 @@
+{
+  "name": "eqt-test-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start:dev": "npm run build:dev",
+    "build:dev": "nodemon 'src/server.ts' --exec 'ts-node' src/server.ts -e ts,graphql"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ingelhag/eqt-test-backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ingelhag/eqt-test-backend/issues"
+  },
+  "homepage": "https://github.com/Ingelhag/eqt-test-backend#readme",
+  "devDependencies": {
+    "nodemon": "^1.19.1",
+    "ts-node": "^8.2.0",
+    "typescript": "^3.5.1"
+  }
+}
