@@ -1,10 +1,16 @@
-import { Company } from "./companies.typedefs";
+import { fetchCompanies } from "./companies.repository";
+import { CompaniesWhereInput, CompaniesListPage } from "./companies.typedefs";
 
 /**
  * Fetches companies
  */
-export const companies = (_: any, args: any, context: any): Company[] => {
-  return [{ name: "Hannes företag" }];
+export const companies = async (
+  _: any,
+  args: CompaniesWhereInput,
+  context: any
+): Promise<CompaniesListPage> => {
+  const result = await fetchCompanies(args);
+  return result;
 };
 
 export default {

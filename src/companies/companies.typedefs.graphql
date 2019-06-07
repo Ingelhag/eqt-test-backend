@@ -1,7 +1,57 @@
 type Query {
-  companies: [Companies!]!
+  companies(
+    page: CompanyPageInput = { number: 0, size: 10 }
+    where: CompanyWhereInput
+    orderBy: CompanyOrderByInput = company_DESC
+  ): CompaniesListPage!
 }
 
-type Companies {
-  name: String!
+enum CompanyOrderByInput {
+  company_ASC
+  company_DESC
+  country_ASC
+  country_DESC
+  rank_ASC
+  rank_DESC
+  industry_ASC
+  industry_DESC
+  assets_ASC
+  assets_DESC
+  marketValue_ASC
+  marketValue_DESC
+  profits_ASC
+  profits_DESC
+  sales_ASC
+  sales_DESC
+  sector_ASC
+  sector_DESC
+}
+
+# A paginated list of requests.
+type CompaniesListPage {
+  totalCount: Int!
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  items: [Company!]!
+}
+
+input CompanyPageInput {
+  number: Int
+  size: Int
+}
+
+input CompanyWhereInput {
+  company: String
+}
+
+type Company {
+  rank: String
+  assets: Float
+  company: String
+  country: String
+  industry: String
+  marketValue: Float
+  profits: Float
+  sales: Float
+  sector: String
 }
