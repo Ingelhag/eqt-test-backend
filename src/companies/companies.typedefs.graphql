@@ -1,0 +1,7 @@
+type Query {
+  companies: [Companies!]!
+}
+
+type Companies {
+  name: String!
+}

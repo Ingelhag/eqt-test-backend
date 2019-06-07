@@ -1,10 +1,12 @@
 import "graphql-import-node";
-import * as typeDefs from "./schema/schema.graphql";
 import { makeExecutableSchema } from "graphql-tools";
-import resolvers from "./resolverMap";
 import { GraphQLSchema } from "graphql";
+import {
+  getTypeDefinitions,
+  getResolvers
+} from "./utils/graphql/graphql-utils";
 const schema: GraphQLSchema = makeExecutableSchema({
-  typeDefs,
-  resolvers
+  typeDefs: getTypeDefinitions(),
+  resolvers: getResolvers()
 });
 export default schema;
