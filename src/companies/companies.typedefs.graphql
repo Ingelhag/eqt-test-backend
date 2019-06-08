@@ -1,7 +1,12 @@
 type Query {
   companies(
     page: CompanyPageInput = { number: 0, size: 10 }
-    where: CompanyWhereInput
+    where: CompanyWhereInput = {
+      company: null
+      countries: []
+      industries: []
+      sectors: []
+    }
     orderBy: CompanyOrderByInput = company_DESC
   ): CompaniesListPage!
 }
@@ -42,6 +47,9 @@ input CompanyPageInput {
 
 input CompanyWhereInput {
   company: String
+  countries: [String!]
+  industries: [String!]
+  sectors: [String!]
 }
 
 type Company {

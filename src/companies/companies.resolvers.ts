@@ -1,12 +1,12 @@
 import { fetchCompanies } from "./companies.repository";
-import { CompaniesWhereInput, CompaniesListPage } from "./companies.typedefs";
+import { CompaniesInput, CompaniesListPage } from "./companies.typedefs";
 
 /**
  * Fetches companies
  */
 export const companies = async (
   _: any,
-  args: CompaniesWhereInput,
+  args: CompaniesInput,
   context: any
 ): Promise<CompaniesListPage> => {
   const result = await fetchCompanies(args);

@@ -3,17 +3,23 @@ import bodybuilder from "bodybuilder";
 import { elasticClient, SearchResponse } from "../utils/elastic/elastic-utils";
 import {
   CompaniesListPage,
-  CompaniesWhereInput,
+  CompaniesInput,
   Company
 } from "./companies.typedefs";
 import { getSortByParameterByEnum } from "./companies.utils";
 
 export const fetchCompanies = async (
-  args: CompaniesWhereInput
+  args: CompaniesInput
 ): Promise<CompaniesListPage> => {
-  const company = args && args.where ? args.where.company : null;
+  const {
+    company = null,
+    countries = [],
+    industries = [],
+    sectors = []
+  } = args.where;
   const pageNumber = args.page.number;
   const pageSize = args.page.size;
+
   const orderBy = getSortByParameterByEnum(args.orderBy);
 
   let body = bodybuilder();
@@ -24,25 +30,36 @@ export const fetchCompanies = async (
     body.query("match", "company", company);
   }
 
-  body.query("range", "assets", { gte: 10, lte: 25 });
+  // body.query("range", "assets", { gte: 10, lte: 25 });
 
-  body.andFilter("bool", b =>
-    b
-      .orFilter("match", "country", "United States")
-      .orFilter("match", "country", "China")
-  );
+  if (countries.length) {
+    body.andFilter("bool", b =>
+      countries.reduce(
+        (filterBody, country) =>
+          filterBody.orFilter("match", "country", "United States"),
+        b
+      )
+    );
+  }
 
-  body.andFilter("bool", b =>
-    b
-      .orFilter("match", "industry", "Internet & Catalog Retail")
-      .orFilter("match", "industry", "Pharmaceuticals")
-  );
+  if (industries.length) {
+    body.andFilter("bool", b =>
+      industries.reduce(
+        (filterBody, industry) =>
+          filterBody.orFilter("match", "industry", industry),
+        b
+      )
+    );
+  }
 
-  body.andFilter("bool", b =>
-    b
-      .orFilter("match", "sector", "Consumer Discretionary")
-      .orFilter("match", "sector", "Health Care")
-  );
+  if (sectors.length) {
+    body.andFilter("bool", b =>
+      sectors.reduce(
+        (filterBody, sector) => filterBody.orFilter("match", "sector", sector),
+        b
+      )
+    );
+  }
 
   body.from(pageNumber * pageSize);
   body.size(pageSize);

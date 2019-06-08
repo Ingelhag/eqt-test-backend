@@ -1,9 +1,14 @@
-export interface CompaniesWhereInput {
+export interface CompaniesInput {
   page: CompanyPageInput;
-  where?: {
-    company: string;
-  };
+  where: CompaniesWhereInput;
   orderBy: CompanyOrderByInput;
+}
+
+export interface CompaniesWhereInput {
+  company: string;
+  countries: string[];
+  industries: string[];
+  sectors: string[];
 }
 
 export enum CompanyOrderByInput {
