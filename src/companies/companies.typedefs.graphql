@@ -6,6 +6,11 @@ type Query {
       countries: []
       industries: []
       sectors: []
+      assets: null
+      marketValue: null
+      profits: null
+      sales: null
+      rank: null
     }
     orderBy: CompanyOrderByInput = company_DESC
   ): CompaniesListPage!
@@ -50,6 +55,16 @@ input CompanyWhereInput {
   countries: [String!]
   industries: [String!]
   sectors: [String!]
+  assets: RangeInput
+  marketValue: RangeInput
+  profits: RangeInput
+  sales: RangeInput
+  rank: RangeInput
+}
+
+input RangeInput {
+  gte: Float
+  lte: Float
 }
 
 type Company {

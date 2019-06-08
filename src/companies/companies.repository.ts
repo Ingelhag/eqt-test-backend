@@ -15,7 +15,12 @@ export const fetchCompanies = async (
     company = null,
     countries = [],
     industries = [],
-    sectors = []
+    sectors = [],
+    assets = null,
+    marketValue = null,
+    profits = null,
+    sales = null,
+    rank = null
   } = args.where;
   const pageNumber = args.page.number;
   const pageSize = args.page.size;
@@ -30,13 +35,31 @@ export const fetchCompanies = async (
     body.query("match", "company", company);
   }
 
-  // body.query("range", "assets", { gte: 10, lte: 25 });
+  if (assets) {
+    body.query("range", "assets", assets);
+  }
+
+  if (marketValue) {
+    body.query("range", "marketValue", marketValue);
+  }
+
+  if (sales) {
+    body.query("range", "sales", sales);
+  }
+
+  if (profits) {
+    body.query("range", "profits", profits);
+  }
+
+  if (rank) {
+    body.query("range", "rank", rank);
+  }
 
   if (countries.length) {
     body.andFilter("bool", b =>
       countries.reduce(
         (filterBody, country) =>
-          filterBody.orFilter("match", "country", "United States"),
+          filterBody.orFilter("match", "country", country),
         b
       )
     );

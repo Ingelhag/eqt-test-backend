@@ -9,6 +9,16 @@ export interface CompaniesWhereInput {
   countries: string[];
   industries: string[];
   sectors: string[];
+  assets: CompaniesRangeInput;
+  marketValue: CompaniesRangeInput;
+  profits: CompaniesRangeInput;
+  sales: CompaniesRangeInput;
+  rank: CompaniesRangeInput;
+}
+
+export interface CompaniesRangeInput {
+  gte: number;
+  lte: number;
 }
 
 export enum CompanyOrderByInput {
