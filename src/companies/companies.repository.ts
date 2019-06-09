@@ -5,10 +5,9 @@ import {
   CompaniesListPage,
   CompaniesInput,
   Company,
-  ElasticAggregations,
-  Aggregations
+  ElasticAggregations
 } from "./companies.typedefs";
-import { getSortByParameterByEnum } from "./companies.utils";
+import { getSortByParameterByEnum, mapAggregations } from "./companies.utils";
 
 export const fetchCompanies = async (
   args: CompaniesInput
@@ -126,7 +125,7 @@ export const fetchCompanies = async (
   const totalCount = searchResult.body.hits.total.value;
   const hasNextPage = totalCount > pageNumber * pageSize;
   const hasPreviousPage = !!pageNumber;
-  const aggregations = mapAggrigations(
+  const aggregations = mapAggregations(
     aggregationSearchResult.body.aggregations
   );
 
@@ -147,30 +146,3 @@ const getCompaniesFromSearchResult = (
 ): Company[] => {
   return result.hits.hits.map(company => company._source);
 };
-
-/**
- * Map the aggrigations from Elastic model.
- * @param aggregations
- */
-const mapAggrigations = (aggregations: ElasticAggregations): Aggregations => ({
-  maxAssets: aggregations.agg_max_assets.value,
-  minAssets: aggregations.agg_min_assets.value,
-  maxMarketValue: aggregations.agg_max_marketValue.value,
-  minMarketValue: aggregations.agg_min_marketValue.value,
-  maxProfits: aggregations.agg_max_profits.value,
-  minProfits: aggregations.agg_min_profits.value,
-  maxSales: aggregations.agg_max_sales.value,
-  minSales: aggregations.agg_min_sales.value,
-  countries: aggregations.agg_terms_country.buckets.map(country => ({
-    count: country.doc_count,
-    key: country.key
-  })),
-  industries: aggregations.agg_terms_industry.buckets.map(industry => ({
-    count: industry.doc_count,
-    key: industry.key
-  })),
-  sectors: aggregations.agg_terms_sector.buckets.map(sector => ({
-    count: sector.doc_count,
-    key: sector.key
-  }))
-});
