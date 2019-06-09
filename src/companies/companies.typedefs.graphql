@@ -42,7 +42,7 @@ type CompaniesListPage {
   totalCount: Int!
   hasNextPage: Boolean!
   hasPreviousPage: Boolean!
-  aggrigations: Aggrigations
+  aggregations: Aggregations
   items: [Company!]!
 }
 
@@ -80,7 +80,7 @@ type Company {
   sector: String
 }
 
-type Aggrigations {
+type Aggregations {
   maxAssets: Float
   minAssets: Float
   maxMarketValue: Float

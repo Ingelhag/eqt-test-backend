@@ -51,7 +51,7 @@ export interface CompaniesListPage {
   totalCount: number;
   hasNextPage: boolean;
   hasPreviousPage: boolean;
-  aggrigations: Aggregations;
+  aggregations: Aggregations;
   items: Company[];
 }
 export interface Company {

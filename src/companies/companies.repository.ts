@@ -114,13 +114,13 @@ export const fetchCompanies = async (
   const totalCount = searchResult.body.hits.total.value;
   const hasNextPage = totalCount > pageNumber * pageSize;
   const hasPreviousPage = !!pageNumber;
-  const aggrigations = mapAggrigations(searchResult.body.aggregations);
+  const aggregations = mapAggrigations(searchResult.body.aggregations);
 
   return {
     totalCount,
     hasNextPage,
     hasPreviousPage,
-    aggrigations,
+    aggregations,
     items: getCompaniesFromSearchResult(searchResult.body)
   };
 };
