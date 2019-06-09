@@ -30,24 +30,27 @@ export const fetchCompanies = async (
   const orderBy = getSortByParameterByEnum(args.orderBy);
 
   let body = bodybuilder();
+  let aggregationBody = bodybuilder();
 
   if (!company) {
     body.query("match_all");
+    aggregationBody.query("match_all");
   } else {
     body.query("match", "company", company);
+    aggregationBody.query("match_all");
   }
 
-  body.aggregation("terms", "country", { size: 1000 });
-  body.aggregation("terms", "sector", { size: 1000 });
-  body.aggregation("terms", "industry", { size: 1000 });
-  body.aggregation("max", "assets");
-  body.aggregation("min", "assets");
-  body.aggregation("max", "marketValue");
-  body.aggregation("min", "marketValue");
-  body.aggregation("max", "sales");
-  body.aggregation("min", "sales");
-  body.aggregation("max", "profits");
-  body.aggregation("min", "profits");
+  aggregationBody.aggregation("terms", "country", { size: 1000 });
+  aggregationBody.aggregation("terms", "sector", { size: 1000 });
+  aggregationBody.aggregation("terms", "industry", { size: 1000 });
+  aggregationBody.aggregation("max", "assets");
+  aggregationBody.aggregation("min", "assets");
+  aggregationBody.aggregation("max", "marketValue");
+  aggregationBody.aggregation("min", "marketValue");
+  aggregationBody.aggregation("max", "sales");
+  aggregationBody.aggregation("min", "sales");
+  aggregationBody.aggregation("max", "profits");
+  aggregationBody.aggregation("min", "profits");
 
   if (assets) {
     body.query("range", "assets", assets);
@@ -107,14 +110,25 @@ export const fetchCompanies = async (
     body: body.build()
   };
 
+  const aggregationSearchParams: RequestParams.Search = {
+    index: "test",
+    body: aggregationBody.build()
+  };
+
   const searchResult: ApiResponse<
     SearchResponse<Company, ElasticAggregations>
   > = await elasticClient.search(searchParams);
 
+  const aggregationSearchResult: ApiResponse<
+    SearchResponse<Company, ElasticAggregations>
+  > = await elasticClient.search(aggregationSearchParams);
+
   const totalCount = searchResult.body.hits.total.value;
   const hasNextPage = totalCount > pageNumber * pageSize;
   const hasPreviousPage = !!pageNumber;
-  const aggregations = mapAggrigations(searchResult.body.aggregations);
+  const aggregations = mapAggrigations(
+    aggregationSearchResult.body.aggregations
+  );
 
   return {
     totalCount,

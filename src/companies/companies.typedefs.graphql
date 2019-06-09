@@ -69,7 +69,7 @@ input RangeInput {
 }
 
 type Company {
-  rank: Number
+  rank: Int
   assets: Float
   company: String
   country: String
