@@ -69,7 +69,7 @@ input RangeInput {
 }
 
 type Company {
-  rank: String
+  rank: Number
   assets: Float
   company: String
   country: String
@@ -89,7 +89,7 @@ type Aggregations {
   minProfits: Float
   maxSales: Float
   minSales: Float
-  companies: [AggregationsUniqueString!]!
+  countries: [AggregationsUniqueString!]!
   industries: [AggregationsUniqueString!]!
   sectors: [AggregationsUniqueString!]!
 }

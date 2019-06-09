@@ -40,27 +40,27 @@ export const fetchCompanies = async (
   body.aggregation("terms", "country", { size: 1000 });
   body.aggregation("terms", "sector", { size: 1000 });
   body.aggregation("terms", "industry", { size: 1000 });
-
   body.aggregation("max", "assets");
   body.aggregation("min", "assets");
+  body.aggregation("max", "marketValue");
+  body.aggregation("min", "marketValue");
+  body.aggregation("max", "sales");
+  body.aggregation("min", "sales");
+  body.aggregation("max", "profits");
+  body.aggregation("min", "profits");
+
   if (assets) {
     body.query("range", "assets", assets);
   }
 
-  body.aggregation("max", "marketValue");
-  body.aggregation("min", "marketValue");
   if (marketValue) {
     body.query("range", "marketValue", marketValue);
   }
 
-  body.aggregation("max", "sales");
-  body.aggregation("min", "sales");
   if (sales) {
     body.query("range", "sales", sales);
   }
 
-  body.aggregation("max", "profits");
-  body.aggregation("min", "profits");
   if (profits) {
     body.query("range", "profits", profits);
   }
@@ -103,7 +103,7 @@ export const fetchCompanies = async (
   body.sort(orderBy[0], orderBy[1]);
 
   const searchParams: RequestParams.Search = {
-    index: "comp",
+    index: "test",
     body: body.build()
   };
 
@@ -147,9 +147,9 @@ const mapAggrigations = (aggregations: ElasticAggregations): Aggregations => ({
   minProfits: aggregations.agg_min_profits.value,
   maxSales: aggregations.agg_max_sales.value,
   minSales: aggregations.agg_min_sales.value,
-  companies: aggregations.agg_terms_country.buckets.map(company => ({
-    count: company.doc_count,
-    key: company.key
+  countries: aggregations.agg_terms_country.buckets.map(country => ({
+    count: country.doc_count,
+    key: country.key
   })),
   industries: aggregations.agg_terms_industry.buckets.map(industry => ({
     count: industry.doc_count,

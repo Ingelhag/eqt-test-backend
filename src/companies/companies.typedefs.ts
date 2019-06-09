@@ -102,7 +102,7 @@ export interface Aggregations {
   minProfits: number;
   maxSales: number;
   minSales: number;
-  companies: AggregationsUniqueString[];
+  countries: AggregationsUniqueString[];
   industries: AggregationsUniqueString[];
   sectors: AggregationsUniqueString[];
 }
