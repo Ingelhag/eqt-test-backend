@@ -1,6 +1,6 @@
 # Introduction
 
-A graphql api that's conntect to an elastic search and it's used to search for companies
+A graphql api that is connected to an elastic search cluster and is used to search for companies.
 
 # Getting Started
 
