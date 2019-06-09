@@ -51,6 +51,7 @@ export interface CompaniesListPage {
   totalCount: number;
   hasNextPage: boolean;
   hasPreviousPage: boolean;
+  aggrigations: Aggregations;
   items: Company[];
 }
 export interface Company {
@@ -63,4 +64,50 @@ export interface Company {
   profits?: number;
   sales?: number;
   sector?: string;
+}
+
+export interface ElasticAggregations {
+  agg_max_assets: ElasticAggregationsValue;
+  agg_max_marketValue: ElasticAggregationsValue;
+  agg_max_profits: ElasticAggregationsValue;
+  agg_max_sales: ElasticAggregationsValue;
+  agg_min_assets: ElasticAggregationsValue;
+  agg_min_marketValue: ElasticAggregationsValue;
+  agg_min_profits: ElasticAggregationsValue;
+  agg_min_sales: ElasticAggregationsValue;
+  agg_terms_country: ElasticAggregationsUniqueStrings;
+  agg_terms_industry: ElasticAggregationsUniqueStrings;
+  agg_terms_sector: ElasticAggregationsUniqueStrings;
+}
+
+interface ElasticAggregationsValue {
+  value: number;
+}
+
+interface ElasticAggregationsUniqueStrings {
+  buckets: ElasticBucket[];
+}
+
+interface ElasticBucket {
+  doc_count: number;
+  key: string;
+}
+
+export interface Aggregations {
+  maxAssets: number;
+  minAssets: number;
+  maxMarketValue: number;
+  minMarketValue: number;
+  maxProfits: number;
+  minProfits: number;
+  maxSales: number;
+  minSales: number;
+  companies: AggregationsUniqueString[];
+  industries: AggregationsUniqueString[];
+  sectors: AggregationsUniqueString[];
+}
+
+export interface AggregationsUniqueString {
+  count: number;
+  key: string;
 }

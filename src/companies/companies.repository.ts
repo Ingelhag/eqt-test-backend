@@ -4,7 +4,9 @@ import { elasticClient, SearchResponse } from "../utils/elastic/elastic-utils";
 import {
   CompaniesListPage,
   CompaniesInput,
-  Company
+  Company,
+  ElasticAggregations,
+  Aggregations
 } from "./companies.typedefs";
 import { getSortByParameterByEnum } from "./companies.utils";
 
@@ -35,18 +37,30 @@ export const fetchCompanies = async (
     body.query("match", "company", company);
   }
 
+  body.aggregation("terms", "country", { size: 1000 });
+  body.aggregation("terms", "sector", { size: 1000 });
+  body.aggregation("terms", "industry", { size: 1000 });
+
+  body.aggregation("max", "assets");
+  body.aggregation("min", "assets");
   if (assets) {
     body.query("range", "assets", assets);
   }
 
+  body.aggregation("max", "marketValue");
+  body.aggregation("min", "marketValue");
   if (marketValue) {
     body.query("range", "marketValue", marketValue);
   }
 
+  body.aggregation("max", "sales");
+  body.aggregation("min", "sales");
   if (sales) {
     body.query("range", "sales", sales);
   }
 
+  body.aggregation("max", "profits");
+  body.aggregation("min", "profits");
   if (profits) {
     body.query("range", "profits", profits);
   }
@@ -88,25 +102,25 @@ export const fetchCompanies = async (
   body.size(pageSize);
   body.sort(orderBy[0], orderBy[1]);
 
-  console.log(body.build());
-
   const searchParams: RequestParams.Search = {
     index: "comp",
     body: body.build()
   };
 
   const searchResult: ApiResponse<
-    SearchResponse<Company>
+    SearchResponse<Company, ElasticAggregations>
   > = await elasticClient.search(searchParams);
 
   const totalCount = searchResult.body.hits.total.value;
   const hasNextPage = totalCount > pageNumber * pageSize;
   const hasPreviousPage = !!pageNumber;
+  const aggrigations = mapAggrigations(searchResult.body.aggregations);
 
   return {
     totalCount,
     hasNextPage,
     hasPreviousPage,
+    aggrigations,
     items: getCompaniesFromSearchResult(searchResult.body)
   };
 };
@@ -115,7 +129,34 @@ export const fetchCompanies = async (
  * Get all companies from search result
  */
 const getCompaniesFromSearchResult = (
-  result: SearchResponse<Company>
+  result: SearchResponse<Company, ElasticAggregations>
 ): Company[] => {
   return result.hits.hits.map(company => company._source);
 };
+
+/**
+ * Map the aggrigations from Elastic model.
+ * @param aggregations
+ */
+const mapAggrigations = (aggregations: ElasticAggregations): Aggregations => ({
+  maxAssets: aggregations.agg_max_assets.value,
+  minAssets: aggregations.agg_min_assets.value,
+  maxMarketValue: aggregations.agg_max_marketValue.value,
+  minMarketValue: aggregations.agg_min_marketValue.value,
+  maxProfits: aggregations.agg_max_profits.value,
+  minProfits: aggregations.agg_min_profits.value,
+  maxSales: aggregations.agg_max_sales.value,
+  minSales: aggregations.agg_min_sales.value,
+  companies: aggregations.agg_terms_country.buckets.map(company => ({
+    count: company.doc_count,
+    key: company.key
+  })),
+  industries: aggregations.agg_terms_industry.buckets.map(industry => ({
+    count: industry.doc_count,
+    key: industry.key
+  })),
+  sectors: aggregations.agg_terms_sector.buckets.map(sector => ({
+    count: sector.doc_count,
+    key: sector.key
+  }))
+});
