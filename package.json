@@ -2,13 +2,8 @@
   "name": "eqt-test-backend",
   "version": "1.0.0",
   "description": "Fetch API for companies",
-  "main": "index.js",
-  "scripts": {
-    "start": "node 'dist/server.js'",
-    "build": "tsc -p . && ncp src/schema dist/schema",
-    "start:dev": "npm run build:dev",
-    "build:dev": "nodemon 'src/server.ts' --exec 'ts-node' src/server.ts -e ts,graphql"
-  },
+  "main": "src/server.ts",
+  "scripts": {},
   "engines": {
     "npm": "6.4.1",
     "node": "10.10.0"
