@@ -42,6 +42,7 @@ type CompaniesListPage {
   totalCount: Int!
   hasNextPage: Boolean!
   hasPreviousPage: Boolean!
+  aggregations: Aggregations
   items: [Company!]!
 }
 
@@ -68,7 +69,7 @@ input RangeInput {
 }
 
 type Company {
-  rank: String
+  rank: Int
   assets: Float
   company: String
   country: String
@@ -77,4 +78,23 @@ type Company {
   profits: Float
   sales: Float
   sector: String
+}
+
+type Aggregations {
+  maxAssets: Float
+  minAssets: Float
+  maxMarketValue: Float
+  minMarketValue: Float
+  maxProfits: Float
+  minProfits: Float
+  maxSales: Float
+  minSales: Float
+  countries: [AggregationsUniqueString!]!
+  industries: [AggregationsUniqueString!]!
+  sectors: [AggregationsUniqueString!]!
+}
+
+type AggregationsUniqueString {
+  count: Int
+  key: String
 }

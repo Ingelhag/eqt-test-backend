@@ -14,7 +14,7 @@ interface Explanation {
   details: Explanation[];
 }
 
-export interface SearchResponse<T> {
+export interface SearchResponse<T, A> {
   took: number;
   timed_out: boolean;
   _scroll_id?: string;
@@ -39,7 +39,7 @@ export interface SearchResponse<T> {
       sort?: string[];
     }>;
   };
-  aggregations?: any;
+  aggregations: A;
 }
 
 export const elasticClient = new Client({

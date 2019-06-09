@@ -4,7 +4,9 @@ import { elasticClient, SearchResponse } from "../utils/elastic/elastic-utils";
 import {
   CompaniesListPage,
   CompaniesInput,
-  Company
+  Company,
+  ElasticAggregations,
+  Aggregations
 } from "./companies.typedefs";
 import { getSortByParameterByEnum } from "./companies.utils";
 
@@ -28,12 +30,27 @@ export const fetchCompanies = async (
   const orderBy = getSortByParameterByEnum(args.orderBy);
 
   let body = bodybuilder();
+  let aggregationBody = bodybuilder();
 
   if (!company) {
     body.query("match_all");
+    aggregationBody.query("match_all");
   } else {
     body.query("match", "company", company);
+    aggregationBody.query("match_all");
   }
+
+  aggregationBody.aggregation("terms", "country", { size: 1000 });
+  aggregationBody.aggregation("terms", "sector", { size: 1000 });
+  aggregationBody.aggregation("terms", "industry", { size: 1000 });
+  aggregationBody.aggregation("max", "assets");
+  aggregationBody.aggregation("min", "assets");
+  aggregationBody.aggregation("max", "marketValue");
+  aggregationBody.aggregation("min", "marketValue");
+  aggregationBody.aggregation("max", "sales");
+  aggregationBody.aggregation("min", "sales");
+  aggregationBody.aggregation("max", "profits");
+  aggregationBody.aggregation("min", "profits");
 
   if (assets) {
     body.query("range", "assets", assets);
@@ -88,25 +105,36 @@ export const fetchCompanies = async (
   body.size(pageSize);
   body.sort(orderBy[0], orderBy[1]);
 
-  console.log(body.build());
-
   const searchParams: RequestParams.Search = {
-    index: "comp",
+    index: "test",
     body: body.build()
   };
 
+  const aggregationSearchParams: RequestParams.Search = {
+    index: "test",
+    body: aggregationBody.build()
+  };
+
   const searchResult: ApiResponse<
-    SearchResponse<Company>
+    SearchResponse<Company, ElasticAggregations>
   > = await elasticClient.search(searchParams);
+
+  const aggregationSearchResult: ApiResponse<
+    SearchResponse<Company, ElasticAggregations>
+  > = await elasticClient.search(aggregationSearchParams);
 
   const totalCount = searchResult.body.hits.total.value;
   const hasNextPage = totalCount > pageNumber * pageSize;
   const hasPreviousPage = !!pageNumber;
+  const aggregations = mapAggrigations(
+    aggregationSearchResult.body.aggregations
+  );
 
   return {
     totalCount,
     hasNextPage,
     hasPreviousPage,
+    aggregations,
     items: getCompaniesFromSearchResult(searchResult.body)
   };
 };
@@ -115,7 +143,34 @@ export const fetchCompanies = async (
  * Get all companies from search result
  */
 const getCompaniesFromSearchResult = (
-  result: SearchResponse<Company>
+  result: SearchResponse<Company, ElasticAggregations>
 ): Company[] => {
   return result.hits.hits.map(company => company._source);
 };
+
+/**
+ * Map the aggrigations from Elastic model.
+ * @param aggregations
+ */
+const mapAggrigations = (aggregations: ElasticAggregations): Aggregations => ({
+  maxAssets: aggregations.agg_max_assets.value,
+  minAssets: aggregations.agg_min_assets.value,
+  maxMarketValue: aggregations.agg_max_marketValue.value,
+  minMarketValue: aggregations.agg_min_marketValue.value,
+  maxProfits: aggregations.agg_max_profits.value,
+  minProfits: aggregations.agg_min_profits.value,
+  maxSales: aggregations.agg_max_sales.value,
+  minSales: aggregations.agg_min_sales.value,
+  countries: aggregations.agg_terms_country.buckets.map(country => ({
+    count: country.doc_count,
+    key: country.key
+  })),
+  industries: aggregations.agg_terms_industry.buckets.map(industry => ({
+    count: industry.doc_count,
+    key: industry.key
+  })),
+  sectors: aggregations.agg_terms_sector.buckets.map(sector => ({
+    count: sector.doc_count,
+    key: sector.key
+  }))
+});
