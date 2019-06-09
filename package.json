@@ -4,7 +4,7 @@
   "description": "Fetch API for companies",
   "main": "src/server.ts",
   "scripts": {
-    "start": "ts-node src/index.ts"
+    "start": "node launch.js"
   },
   "engines": {
     "npm": "6.4.1",
