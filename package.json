@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "Fetch API for companies",
   "main": "src/server.ts",
-  "scripts": {},
+  "scripts": {
+    "start": "ts-node src/index.ts"
+  },
   "engines": {
     "npm": "6.4.1",
     "node": "10.10.0"
