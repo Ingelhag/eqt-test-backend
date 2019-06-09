@@ -1,5 +1,8 @@
 import { fileLoader, mergeResolvers, mergeTypes } from "merge-graphql-schemas";
 
+/**
+ * Get all resolvers.ts and merge into one
+ */
 export function getResolvers(): { Query: {}; Mutation: {} } {
   const resolversPath = `${__dirname}/../../**/*.resolvers.ts`;
   const resolvers = fileLoader(resolversPath, {
@@ -10,8 +13,7 @@ export function getResolvers(): { Query: {}; Mutation: {} } {
 }
 
 /**
- * Gets all type definitions for the API. It will include all files in the src-folder ending with *.typedefs.graphql as well as any part of the Prisma schema
- * that has been imported in the db.schema.imports.graphql file.
+ * Gets all type definitions for the API. It will include all files in the src-folder ending with *.typedefs.graphql.
  */
 export function getTypeDefinitions(): string {
   const domainTypesPath = `${__dirname}/../../**/*.typedefs.graphql`;
