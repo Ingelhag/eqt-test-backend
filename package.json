@@ -9,6 +9,10 @@
     "start:dev": "npm run build:dev",
     "build:dev": "nodemon 'src/server.ts' --exec 'ts-node' src/server.ts -e ts,graphql"
   },
+  "engines": {
+    "npm": "6.4.1",
+    "node": "10.10.0"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Ingelhag/eqt-test-backend.git"
